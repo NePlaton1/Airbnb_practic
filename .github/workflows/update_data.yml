@@ -1,0 +1,39 @@
+name: Update Airbnb Data
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout репозитория с LFS
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Установить Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Установить зависимости
+        run: pip install requests beautifulsoup4 pandas lxml
+
+      - name: Запустить обновление данных
+        run: python update_data.py
+
+      - name: Коммит и пуш, если данные изменились
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add CleanData/listings_clean.csv CleanData/last_update.txt
+          if git diff --staged --quiet; then
+            echo "Изменений нет."
+          else
+            git commit -m "Автообновление данных [skip ci]"
+            git push
+          fi
