@@ -1,5 +1,5 @@
 streamlit
 pandas
-plotly
+plotly==6.8.0
 requests
 beautifulsoup4

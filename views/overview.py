@@ -70,24 +70,19 @@ def render_overview(df):
 
     if "latitude" in df.columns and "longitude" in df.columns:
         st.subheader("Карта объявлений")
-        map_kwargs = {
-            "data_frame": df,
-            "lat": "latitude",
-            "lon": "longitude",
-            "color": "price",
-            "size": "price",
-            "hover_name": "neighbourhood_cleansed",
-            "zoom": 10,
-            "height": 500,
-            "size_max": 10,
-            "labels": {"price": "Цена"},
-        }
-        if hasattr(px, "scatter_map"):
-            map_kwargs["map_style"] = "open-street-map"
-            map_fig = px.scatter_map(**map_kwargs)
-        else:
-            map_kwargs["mapbox_style"] = "open-street-map"
-            map_fig = px.scatter_mapbox(**map_kwargs)
+        map_fig = px.scatter_map(
+            df,
+            lat="latitude",
+            lon="longitude",
+            color="price",
+            size="price",
+            hover_name="neighbourhood_cleansed",
+            map_style="open-street-map",
+            zoom=10,
+            height=500,
+            size_max=10,
+            labels={"price": "Цена"},
+        )
         st.plotly_chart(map_fig, use_container_width=True)
 
     st.subheader("Карта цен по районам")
